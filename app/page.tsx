@@ -25,7 +25,7 @@ export default function HomePage() {
       <div className="absolute inset-0 bg-black bg-opacity-5 z-0 pointer-events-none" ></div>
 
       <header className="absolute top-0 left-0 w-full flex items-center justify-between p-6 z-20">
-        <Link href="/" className="text-white text-2xl font-bold">WILDSTOCK</Link>
+        <Link href="/" className="text-white text-2xl font-bold">Stays</Link>
         <div className="flex space-x-4">
           <button
             onClick={openJoinModal}

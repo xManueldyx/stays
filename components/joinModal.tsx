@@ -6,14 +6,19 @@ interface JoinModalProps {
 }
 
 const JoinModal: React.FC<JoinModalProps> = ({ isOpen, onClose }) => {
-  if (!isOpen) return null; // No renderizar el modal si isOpen es false
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
       <div className="bg-white rounded-lg p-6 w-96 shadow-lg relative text-center">
-        <button onClick={onClose} className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl"
+        >
+          &times;
+        </button>
         <div className="mb-4 flex flex-col items-center">
-          <img src="/logo.png" alt="Wildstock Logo" className="w-20 mb-2" />
+          <img src="/Stays.png" alt="Stays Logo" className="w-20 mb-2" />
           <h2 className="text-xl font-bold">Create An Account:</h2>
         </div>
         <form>
@@ -35,7 +40,10 @@ const JoinModal: React.FC<JoinModalProps> = ({ isOpen, onClose }) => {
             className="w-full px-3 py-2 border rounded mb-4"
             required
           />
-          <button type="submit" className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">
+          <button
+            type="submit"
+            className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+          >
             Join With Email
           </button>
         </form>
@@ -52,7 +60,11 @@ const JoinModal: React.FC<JoinModalProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
         <p className="mt-4 text-gray-600">
-          Already a member? <a href="#" className="text-blue-500">Click Here</a> to login.
+          Already a member?{" "}
+          <a href="#" className="text-blue-500">
+            Click Here
+          </a>{" "}
+          to login.
         </p>
       </div>
     </div>
