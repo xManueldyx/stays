@@ -4,10 +4,51 @@ import React, { useState } from "react";
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onLogin: () => void;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   if (!isOpen) return null;
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/usersLogin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to login");
+      }
+
+      alert("Login successful!");
+      onLogin();
+      onClose(); // Cierra el modal al iniciar sesión exitosamente
+    } catch (err: any) {
+      if (err.name === "TypeError") {
+        setError("Network error, please try again.");
+      } else {
+        setError(err.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-lg relative">
@@ -25,28 +66,38 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           />
           <h2 className="text-xl font-bold text-gray-800">Stays</h2>
         </div>
-        <form>
+        <form onSubmit={handleLogin}>
           <div className="mb-4">
             <input
               type="email"
               placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+              required
             />
           </div>
           <div className="mb-4">
             <input
               type="password"
               placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none"
+              required
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
+            className={`w-full bg-green-500 text-white py-2 rounded-lg ${
+              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-600"
+            } transition`}
+            disabled={isLoading}
           >
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
+        {error && <p className="mt-2 text-red-500 text-center">{error}</p>}
         <div className="text-center mt-4">
           <p className="text-sm">
             Not a member yet?{" "}

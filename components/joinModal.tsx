@@ -6,7 +6,56 @@ interface JoinModalProps {
 }
 
 const JoinModal: React.FC<JoinModalProps> = ({ isOpen, onClose }) => {
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   if (!isOpen) return null;
+
+  // Manejar cambios en los inputs
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  // Enviar datos al backend
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/usersJoin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.username,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to create user");
+      }
+
+      alert("User created successfully!");
+      setFormData({ username: "", email: "", password: "" }); // Resetear formulario
+      onClose(); // Cerrar modal
+    } catch (error: any) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
@@ -21,32 +70,45 @@ const JoinModal: React.FC<JoinModalProps> = ({ isOpen, onClose }) => {
           <img src="/Stays.png" alt="Stays Logo" className="w-20 mb-2" />
           <h2 className="text-xl font-bold">Create An Account:</h2>
         </div>
-        <form>
+        <form onSubmit={handleSubmit}>
           <input
             type="text"
+            name="username"
             placeholder="Username"
+            value={formData.username}
+            onChange={handleInputChange}
             className="w-full px-3 py-2 border rounded mb-2"
             required
           />
           <input
             type="email"
+            name="email"
             placeholder="Email"
+            value={formData.email}
+            onChange={handleInputChange}
             className="w-full px-3 py-2 border rounded mb-2"
             required
           />
           <input
             type="password"
+            name="password"
             placeholder="Password"
+            value={formData.password}
+            onChange={handleInputChange}
             className="w-full px-3 py-2 border rounded mb-4"
             required
           />
           <button
             type="submit"
-            className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+            className={`w-full bg-green-500 text-white py-2 rounded ${
+              isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-green-600"
+            }`}
+            disabled={isLoading}
           >
-            Join With Email
+            {isLoading ? "Loading..." : "Join With Email"}
           </button>
         </form>
+        {error && <p className="mt-2 text-red-500">{error}</p>}
         <p className="my-4 text-gray-600">Or Connect With</p>
         <div className="flex justify-center gap-2">
           <button className="bg-blue-500 text-white px-4 py-2 rounded flex items-center">
