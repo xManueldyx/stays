@@ -1,17 +1,19 @@
 import Link from "next/link";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onLogin: () => void;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
 
   if (!isOpen) return null;
 
@@ -36,7 +38,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin }) => 
       }
 
       alert("Login successful!");
-      onLogin();
       onClose(); // Cierra el modal al iniciar sesión exitosamente
     } catch (err: any) {
       if (err.name === "TypeError") {
@@ -47,6 +48,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin }) => 
     } finally {
       setIsLoading(false);
     }
+    
+    router.push("/dashboard");
   };
 
   return (
@@ -111,22 +114,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin }) => 
               Click here
             </span>
           </p>
-        </div>
-        <div className="mt-6">
-          <p className="text-center text-sm font-medium text-gray-500 mb-4">
-            Or Sign in With:
-          </p>
-          <div className="flex justify-center space-x-4">
-            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
-              <span>Google</span>
-            </button>
-            <button className="bg-blue-400 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
-              <span>Twitter</span>
-            </button>
-            <button className="bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
-              <span>Facebook</span>
-            </button>
-          </div>
         </div>
       </div>
     </div>

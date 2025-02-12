@@ -2,33 +2,43 @@ import { NextResponse } from 'next/server';
 import prisma from '../../lib/prisma';
 import bcrypt from "bcryptjs";
 
+const HASH_ROUNDS = 10;
 
-const SECRET_KEY = process.env.JWT_SECRET || "your_secret_key";
 export async function GET() {
   try {
-      const users = await prisma.users.findMany();
-      return NextResponse.json({ success: true, data: users });
+    const users = await prisma.user.findMany();
+    return NextResponse.json({ success: true, data: users });
   } catch (error) {
-      console.error('Error fetching users:', error);
-      return NextResponse.json({ success: false, error: 'Error fetching users' });
+    console.error('Error fetching users:', error);
+    return NextResponse.json({ success: false, error: 'Error fetching users' });
   }
 }
 
 export async function POST(request: Request) {
   try {
-      const body = await request.json();
-      const hashedPassword = await bcrypt.hash(body.password, 10);
-      const newUser = await prisma.users.create({
-          data: {
-              name: body.name,
-              email: body.email,
-              password: hashedPassword,
-          },
-      });
-      return NextResponse.json({ success: true, data: newUser });
+    const body = await request.json();
+    const { name, email, password } = body;
+
+    if (!name || !email || !password) {
+      return NextResponse.json({ success: false, error: 'Missing required fields' });
+    }
+
+    if (typeof name !== 'string' || typeof email !== 'string' || typeof password !== 'string') {
+      return NextResponse.json({ success: false, error: 'Invalid input types' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, HASH_ROUNDS);
+    const newUser = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    return NextResponse.json({ success: true, data: newUser });
   } catch (error: any) {
-      console.error('Error creating user:', error);
-      return NextResponse.json({ success: false, error: 'Error creating user' });
+    console.error('Error creating user:', error);
+    return NextResponse.json({ success: false, error: 'Error creating user' });
   }
 }
-
