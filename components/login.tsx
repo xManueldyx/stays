@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import JoinModal from "../components/joinModal";
-import LoginModal from "../components/loginModal";
+import JoinModal from "./joinModal";
+import LoginModal from "./loginModal";
 import Link from "next/link";
 
 export default function Login() {
