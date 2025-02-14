@@ -3,11 +3,36 @@
 import Image from "next/image";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ChevronDown, User, HelpCircle, LogOut } from "lucide-react";
+import { useRouter } from 'next/navigation';
+import { destroyCookie } from 'nookies';
+
+
+async function fetchUserData() {
+  try {
+      const response = await fetch('/api/userData');
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      console.log('User data:', data);
+  } catch (error) {
+      console.error('Error fetching user data:', error);
+  }
+}
+
+fetchUserData();
+
 export default function Home() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    destroyCookie(null, 'session');
+    router.push('/');
+  };
+
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      {/* Navbar */}
       <nav className="bg-blue-900 text-white p-4 flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <span className="text-xl font-bold">Stays</span>
@@ -27,7 +52,7 @@ export default function Home() {
               <div className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
               </div>
-              <span>User</span>
+              <span> {User.name} </span>
               <ChevronDown className="w-4 h-4" />
             </DropdownMenu.Trigger>
 
@@ -48,7 +73,8 @@ export default function Home() {
 
                 <DropdownMenu.Separator className="h-px bg-gray-300 my-1" />
 
-                <DropdownMenu.Item className="flex items-center px-4 py-2 text-red-600 hover:bg-red-100 cursor-pointer">
+                <DropdownMenu.Item className="flex items-center px-4 py-2 text-red-600 hover:bg-red-100 cursor-pointer"
+                onClick={handleLogout}>
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
                 </DropdownMenu.Item>
@@ -71,7 +97,6 @@ export default function Home() {
         />
       </div>
 
-      {/* Hero Section */}
       <div className="relative w-full h-[400px]">
         <Image
           src="/fox.jpg"

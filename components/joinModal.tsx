@@ -16,13 +16,11 @@ const JoinModal: React.FC<JoinModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  // Manejar cambios en los inputs
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Enviar datos al backend
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -48,8 +46,8 @@ const JoinModal: React.FC<JoinModalProps> = ({ isOpen, onClose }) => {
       }
 
       alert("User created successfully!");
-      setFormData({ username: "", email: "", password: "" }); // Resetear formulario
-      onClose(); // Cerrar modal
+      setFormData({ username: "", email: "", password: "" });
+      onClose();
     } catch (error: any) {
       setError(error.message);
     } finally {

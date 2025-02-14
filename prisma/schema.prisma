@@ -13,33 +13,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
+model user {
   id            Int      @id @default(autoincrement())
   name          String
   email         String   @unique
   password      String
-  photoPerfil   Media?   @relation("UserPhotoPerfil", fields: [photoPerfilId], references: [id])
-  photoPerfilId Int?     @unique
-  media         Media[]  @relation("UserMedia")
+  photoUrl      Bytes?
   creadoEn      DateTime @default(now())
-}
-
-model Media {
-  id          Int      @id @default(autoincrement())
-  title       String   @db.VarChar(255)
-  description String?  @db.Text
-  filename    String   @db.VarChar(255)
-  type        MediaType
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  userId      Int?    
-  user        users?   @relation("UserMedia", fields: [userId], references: [id])
-  profileFor  users?   @relation("UserPhotoPerfil")
-}
-
-enum MediaType {
-  still
-  motion
 }
 
 

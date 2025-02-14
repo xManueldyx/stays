@@ -37,16 +37,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         throw new Error(result.error || "Failed to login");
       }
 
-      // Verificar si estamos en el cliente antes de acceder a localStorage
       if (typeof window !== "undefined") {
-        // Almacenar el token en el almacenamiento local
         localStorage.setItem("token", result.token);
       }
 
       alert("Login successful!");
-      onClose(); // Cierra el modal al iniciar sesión exitosamente
+      onClose();
 
-      // Redirigir al usuario a la página protegida
       router.push("/dashboard");
     } catch (err: any) {
       if (err.name === "TypeError") {
